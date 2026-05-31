@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>生物反应器细胞代谢模拟</title>
+  <script type="module" crossorigin src="./assets/index.Dv7U71pZ.js"></script>
+  <link rel="stylesheet" crossorigin href="./assets/index.DaZExoSz.css">
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>🧬 生物反应器细胞代谢模拟</h1>
+      <div class="controls-header">
+        <button id="startBtn" class="btn btn-primary">▶ 开始</button>
+        <button id="stopBtn" class="btn btn-secondary">⏸ 暂停</button>
+        <button id="resetBtn" class="btn btn-danger">🔄 重置</button>
+      </div>
+    </header>
+
+    <div class="tabs">
+      <button class="tab-btn active" data-tab="reactor">🔬 反应器</button>
+      <button class="tab-btn" data-tab="network">🌐 代谢网络</button>
+      <button class="tab-btn" data-tab="analysis">📊 分析与优化</button>
+    </div>
+
+    <div class="main-content">
+      <div class="tab-content active" id="reactorTab">
+        <div class="canvas-container">
+          <canvas id="bioreactorCanvas" width="800" height="600"></canvas>
+        </div>
+
+        <div class="sidebar">
+          <div class="panel">
+            <h2>⚙️ 培养参数</h2>
+            <div class="control-group">
+              <label>
+                <span class="label-text">葡萄糖浓度</span>
+                <span class="value" id="glucoseValue">25.0</span>
+                <span class="unit">mM</span>
+              </label>
+              <input type="range" id="glucoseSlider" min="0" max="100" step="0.5" value="25">
+            </div>
+            <div class="control-group">
+              <label>
+                <span class="label-text">溶氧水平</span>
+                <span class="value" id="oxygenValue">50.0</span>
+                <span class="unit">%</span>
+              </label>
+              <input type="range" id="oxygenSlider" min="0" max="100" step="1" value="50">
+            </div>
+          </div>
+
+          <div class="panel">
+            <h2>📊 实时状态</h2>
+            <div class="stats-grid">
+              <div class="stat-item">
+                <span class="stat-label">细胞密度</span>
+                <span class="stat-value" id="cellCount">1.00</span>
+                <span class="stat-unit">×10⁶</span>
+              </div>
+              <div class="stat-item">
+                <span class="stat-label">葡萄糖</span>
+                <span class="stat-value" id="currentGlucose">25.00</span>
+                <span class="stat-unit">mM</span>
+              </div>
+              <div class="stat-item">
+                <span class="stat-label">乳酸</span>
+                <span class="stat-value" id="lactate">0.00</span>
+                <span class="stat-unit">mM</span>
+              </div>
+              <div class="stat-item">
+                <span class="stat-label">丙酮酸</span>
+                <span class="stat-value" id="pyruvate">0.10</span>
+                <span class="stat-unit">mM</span>
+              </div>
+              <div class="stat-item">
+                <span class="stat-label">ATP</span>
+                <span class="stat-value" id="atp">2.00</span>
+                <span class="stat-unit">mM</span>
+              </div>
+              <div class="stat-item">
+                <span class="stat-label">溶氧</span>
+                <span class="stat-value" id="currentOxygen">50.00</span>
+                <span class="stat-unit">%</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="panel">
+            <h2>📈 生理参数</h2>
+            <div class="stats-grid">
+              <div class="stat-item highlight">
+                <span class="stat-label">比生长速率 μ</span>
+                <span class="stat-value" id="specificGrowthRate">0.00</span>
+                <span class="stat-unit">h⁻¹</span>
+              </div>
+              <div class="stat-item highlight">
+                <span class="stat-label">比糖耗 qGlc</span>
+                <span class="stat-value" id="specificGlucoseUptake">0.00</span>
+                <span class="stat-unit">mmol/g/h</span>
+              </div>
+              <div class="stat-item highlight">
+                <span class="stat-label">比乳产 qLac</span>
+                <span class="stat-value" id="specificLactateProduction">0.00</span>
+                <span class="stat-unit">mmol/g/h</span>
+              </div>
+              <div class="stat-item highlight">
+                <span class="stat-label">乳酸产率 YLac/Glc</span>
+                <span class="stat-value" id="lactateYield">0.00</span>
+                <span class="stat-unit">mol/mol</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="panel">
+            <h2>🔄 代谢通量 & 丙酮酸分配</h2>
+            <div class="flux-display">
+              <div class="flux-item">
+                <div class="flux-label">糖酵解</div>
+                <div class="flux-bar">
+                  <div class="flux-fill glycolysis" id="glycolysisFlux" style="width: 0%"></div>
+                </div>
+                <span class="flux-value" id="glycolysisValue">0.00</span>
+              </div>
+              <div class="flux-item">
+                <div class="flux-label">TCA循环</div>
+                <div class="flux-bar">
+                  <div class="flux-fill tca" id="tcaFlux" style="width: 0%"></div>
+                </div>
+                <span class="flux-value" id="tcaValue">0.00</span>
+              </div>
+              <div class="flux-item">
+                <div class="flux-label">乳酸生成</div>
+                <div class="flux-bar">
+                  <div class="flux-fill lactate" id="lactateFlux" style="width: 0%"></div>
+                </div>
+                <span class="flux-value" id="lactateFluxValue">0.00</span>
+              </div>
+            </div>
+            <div class="partition-display">
+              <div class="partition-label">丙酮酸流向:</div>
+              <div class="partition-bar">
+                <div class="partition-fill tca-part" id="tcaPartition" style="width: 50%"></div>
+                <div class="partition-fill lactate-part" id="lactatePartition" style="width: 50%"></div>
+              </div>
+              <div class="partition-labels">
+                <span id="tcaPartitionLabel">TCA: 50%</span>
+                <span id="lactatePartitionLabel">乳酸: 50%</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="tab-content" id="networkTab">
+        <div class="canvas-container">
+          <canvas id="networkCanvas" width="850" height="500"></canvas>
+        </div>
+      </div>
+
+      <div class="tab-content" id="analysisTab">
+        <div class="analysis-container">
+          <div class="analysis-section">
+            <div class="panel">
+              <h2>🎯 参数优化</h2>
+              <button id="optimizeBtn" class="btn btn-primary">计算最优参数</button>
+              <div id="optimizationResults" class="results-container"></div>
+            </div>
+
+            <div class="panel">
+              <h2>📊 代谢通量分析</h2>
+              <button id="fluxAnalysisBtn" class="btn btn-secondary">运行通量分析</button>
+              <div id="analysisResults" class="results-container"></div>
+            </div>
+
+            <div class="panel">
+              <h2>💡 补料策略推荐</h2>
+              <button id="feedingStrategyBtn" class="btn btn-success">获取补料建议</button>
+              <div id="feedingResults" class="results-container"></div>
+            </div>
+          </div>
+
+          <div class="analysis-sidebar">
+            <div class="panel">
+              <h2>📉 抑制分析</h2>
+              <div class="inhibition-stats">
+                <div class="inhibition-item">
+                  <span class="inhibition-label">葡萄糖效应</span>
+                  <span class="inhibition-value" id="glucoseEffect">0.00</span>
+                </div>
+                <div class="inhibition-item">
+                  <span class="inhibition-label">氧效应</span>
+                  <span class="inhibition-value" id="oxygenEffect">0.00</span>
+                </div>
+                <div class="inhibition-item">
+                  <span class="inhibition-label">乳酸抑制</span>
+                  <span class="inhibition-value" id="lactateInhibition">0.00</span>
+                </div>
+                <div class="inhibition-item">
+                  <span class="inhibition-label">细胞活力</span>
+                  <span class="inhibition-value" id="viability">0.0%</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

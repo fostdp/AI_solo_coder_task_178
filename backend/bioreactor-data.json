@@ -1,0 +1,44 @@
+{
+  "culture_params": [
+    {
+      "id": 1,
+      "glucose": 25,
+      "dissolved_oxygen": 50,
+      "timestamp": "2026-05-27T07:18:09.736Z"
+    },
+    {
+      "id": 2,
+      "glucose": 25,
+      "dissolved_oxygen": 50,
+      "timestamp": "2026-05-27T07:33:03.440Z"
+    },
+    {
+      "id": 3,
+      "glucose": 25,
+      "dissolved_oxygen": 50,
+      "timestamp": "2026-05-27T07:42:17.138Z"
+    },
+    {
+      "id": 4,
+      "glucose": 25,
+      "dissolved_oxygen": 50,
+      "cell_line_id": "CHO_K1",
+      "timestamp": "2026-05-27T08:16:30.519Z"
+    },
+    {
+      "id": 5,
+      "glucose": 25,
+      "dissolved_oxygen": 50,
+      "cell_line_id": "CHO_K1",
+      "timestamp": "2026-05-27T08:51:39.742Z"
+    },
+    {
+      "id": 6,
+      "glucose": 25,
+      "dissolved_oxygen": 50,
+      "cell_line_id": "CHO_K1",
+      "timestamp": "2026-05-27T08:59:03.947Z"
+    }
+  ],
+  "metabolism_snapshots": []
+}
